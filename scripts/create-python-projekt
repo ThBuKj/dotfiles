@@ -1,0 +1,45 @@
+# Skriptet är placerat i katalogen $HOME/.local/bin/, som är inkluderad i systemets PATH-variabel.
+# Detta gör att skriptet kan anropas direkt som ett kommando (mkpython) från vilken katalog som helst i 
+# terminalen, utan att prefixet ./ behövs.
+
+
+#!/bin/bash
+# Stoppa scriptet omedelbart om ett kommando misslyckas
+set -e
+
+# Kontrollera om GitHub CLI ('gh') är installerat
+if ! command -v gh &> /dev/null; then
+    echo "Fel: GitHub CLI ('gh') är inte installerat."
+    echo "För att använda den automatiska GitHub-funktionen, installera det först med:"
+    echo "sudo apt/dnf install gh && gh auth login"
+    exit 1
+fi
+
+# Steg 1: Fråga efter och navigera till rätt plats
+read -r -p "Ange sökväg för projektet: " -e -i "$HOME/Python" PROJECT_PATH
+
+if [ ! -d "$PROJECT_PATH" ]; then
+    echo "Fel: Mappen '$PROJECT_PATH' finns inte. Skapa den först."
+    exit 1
+fi
+
+echo "Navigerar till \"$PROJECT_PATH\"..."
+cd "$PROJECT_PATH"
+
+# Steg 2: Fråga efter projektnamn
+read -r -p "Vad ska projektet heta? " PROJEKTNAMN
+
+if [ -z "$PROJEKTNAMN" ]; then
+    echo "Fel: Inget projektnamn angavs. Avbryter."
+    exit 1
+fi
+
+if [ -d "$PROJEKTNAMN" ]; then
+    echo "Fel: Mappen '$PROJEKTNAMN' finns redan i '$PROJECT_PATH'. Avbryter."
+    exit 1
+fi
+
+# Steg 3: Skapa projektmapp och gå in i den
+echo "Skapar projektet \"$PROJEKTNAMN\"..."
+mkdir "$PROJEKTNAMN"
+cd "$PROJEKTNAMN"
