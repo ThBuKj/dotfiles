@@ -1,0 +1,16 @@
+# Random keybinds 
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
+binding='<Super>t'
+command='wezterm'
+name='Starta WezTerm'
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1]
+binding='<Super>v'
+command='code'
+name='VS Code'
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4]
+binding='<Super>a'
+command='code /home/thomas/workspace/anteckningar.code-workspace'
+name='Antecknings-workspaceVC'
