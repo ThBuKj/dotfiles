@@ -12,10 +12,9 @@ HYPHEN_INSENSITIVE="true"
 # Uppdatera Oh My Zsh automatiskt utan att fråga
 zstyle ':omz:update' mode auto
 
-# Plugins (Lägg till fler här om du vill, t.ex. 'docker' eller 'python')
-# SSH-agent inställningen du hade
+# Plugins
 zstyle :omz:plugins:ssh-agent identities id_rsa_4096
-plugins=(git ssh-agent zsh-autosuggestions zsh-syntax-highlighting)
+plugins=(git ssh-agent z zsh-autosuggestions zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -27,14 +26,16 @@ export EDITOR=micro
 export VISUAL=micro
 export LANG=en_US.UTF-8
 
-# Aktivera färger för ls/dir (om din färgfil finns)
-[ -f ~/.dir_colors/dircolors ] && eval "$(dircolors ~/.dir_colors/dircolors)"
+# Aktivera fzf (Fuzzy Finder) om installerat
+source <(fzf --zsh)
 
 # =========================================================
 # 3. ALIAS (Genvägar)
 # =========================================================
 alias nano="micro"
 alias rg="rg --smart-case"
+alias reload="source ~/.zshrc && echo '🚀 Config laddad!'"
+alias memtjuvar="ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | head -n 10"
 
 # SSH Servrar
 alias router="ssh router"
@@ -42,6 +43,11 @@ alias 3145="ssh -p 22456 thomas@192.168.10.10"
 alias 3145-2="ssh -p 22456 thomas@192.168.10.11"
 alias ubuntuserver="ssh thomas@192.168.122.7 -p 22456"
 alias fedoraserver="ssh thomas@192.168.122.41 -p 22456"
+
+# DevOps Docker-genvägar
+alias dps="docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
+alias dlogs="docker logs -f"
+alias dclean="docker system prune -af --volumes"
 
 # =========================================================
 # 4. ANTECKNINGSSYSTEM (Notes)
@@ -67,10 +73,10 @@ function ns() {
 }
 
 # =========================================================
-# 5. AUTOMATIK (Venv & Starship)
+# 5. AUTOMATIK (Venv & Shell Hooks)
 # =========================================================
 
-# Auto-aktivera Python venv
+# Auto-aktivera Python venv vid mappsökning
 function chpwd() {
     if [ -d ".venv" ]; then
         if [[ "$VIRTUAL_ENV" == "" ]]; then
@@ -86,6 +92,70 @@ function chpwd() {
 }
 chpwd
 
-# AKTIVERA STARSHIP PROMPT
-# (Ta bort # nedan när du installerat Starship för en snyggare prompt)
-# eval "$(starship init zsh)"
+# =========================================================
+# 6. HJÄLPFUNKTIONER (DevOps & Nätverk)
+# =========================================================
+
+# Snyggare IP-koll
+function myip() {
+    local L_IP=$(hostname -I | awk '{print $1}')
+    local P_IP=$(curl -s --max-time 2 https://ifconfig.me || echo "Offline")
+
+    echo -e "\e[1;34m╭─ Webb & Nätverk ───────────────────────────╮\e[0m"
+    echo -e "\e[1;34m│\e[0m  \e[32m󰩟 Lokal IP:\e[0m  $L_IP"
+    echo -e "\e[1;34m│\e[0m  \e[35m󰖟 Publik IP:\e[0m $P_IP"
+    echo -e "\e[1;34m╰────────────────────────────────────────────╯\e[0m"
+}
+
+# Packa upp allt
+function extract() {
+    if [ -f $1 ] ; then
+        case $1 in
+            *.tar.bz2)   tar xjf $1     ;;
+            *.tar.gz)    tar xzf $1     ;;
+            *.bz2)       bunzip2 $1     ;;
+            *.rar)       unrar x $1     ;;
+            *.gz)        gunzip $1      ;;
+            *.tar)       tar xf $1      ;;
+            *.tbz2)      tar xjf $1     ;;
+            *.tgz)       tar xzf $1     ;;
+            *.zip)       unzip $1       ;;
+            *.7z)        7z x $1        ;;
+            *)           echo "'$1' kan inte packas upp via extract()" ;;
+        esac
+    else
+        echo "'$1' är inte en giltig fil"
+    fi
+}
+
+# Snabbhjälp/Cheat sheets (t.ex: qs python eller qs tar)
+function qs() {
+    curl -s "https://cht.sh/$1" | less -R
+}
+
+# DevOps Dashboard vid start
+function dashboard() {
+    echo -e "\e[1;36m🚀 Systemstatus för $HOST\e[0m"
+
+    # RAM-användning
+    local RAM=$(free -m | awk '/Mem:/ { printf("%3.1f%%", $3/$2*100) }')
+    echo -e "\e[33m󰍛 RAM-användning:\e[0m $RAM"
+
+    # Diskutrymme (Root)
+    local DISK=$(df -h / | awk 'NR==2 {print $5}')
+    echo -e "\e[34m󰋊 Diskutrymme:\e[0m    $DISK använt"
+
+    # Docker-status
+    if command -v docker &> /dev/null; then
+        local D_RUNNING=$(docker ps -q | wc -l)
+        if [ "$D_RUNNING" -gt 0 ]; then
+            echo -e "\e[32m󰡨 Docker:\e[0m         $D_RUNNING containrar igång"
+        else
+            echo -e "\e[31m󰡨 Docker:\e[0m         Inga aktiva containrar"
+        fi
+    fi
+    echo ""
+}
+
+# Kör dashboard vid interaktiv start
+[[ $- == *i* ]] && dashboard
