@@ -1,5 +1,6 @@
 # Snabbkommandon till VS code
-# /home/thomas/.config/Code/User/keybindings.json
+
+# cp ~/.config/Code/User/keybindings.json ~/dotfiles/config/vscode/
 
 
 // Place your key bindings in this file to override the defaults
