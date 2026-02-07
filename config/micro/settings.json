@@ -1,0 +1,8 @@
+{
+    "colorscheme": "dracula-hc",
+    "mkparents": true,
+    "rmtrailingws": true,
+    "savecursor": true,
+    "saveundo": true,
+    "tabstospaces": true
+}
