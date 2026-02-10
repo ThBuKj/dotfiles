@@ -7,7 +7,7 @@ name='Starta WezTerm'
 
 [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1]
 binding='<Super>v'
-command='code'
+command='code /home/thomas/vscode'
 name='VS Code'
 
 [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4]
