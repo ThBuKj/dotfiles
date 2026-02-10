@@ -1,0 +1,94 @@
+// Snabbkommandon till VS code
+
+// cp ~/.config/Code/User/settings.json ~/dotfiles/config/vscode/
+
+// Place your key bindings in this file to override the defaults
+
+
+{
+    /* --- NYTT: Här startar terminalen om ingen annan mapp är vald --- */
+    "terminal.integrated.cwd": "/home/thomas/vscode",
+
+    /* --- VIKTIGT: Uppdaterad sökväg till din venv efter flytten --- */
+    "python.defaultInterpreterPath": "/home/thomas/vscode/Python/Skola/.venv",
+
+    /* --- DINA TIDIGARE INSTÄLLNINGAR --- */
+    "workbench.panel.defaultLocation": "right",
+    "terminal.integrated.allowChords": false,
+    "terminal.integrated.commandsToSkipShell": [
+        "workbench.action.previousEditor",
+        "workbench.action.nextEditor"
+    ],
+    "workbench.colorTheme": "Dracula At Night",
+    
+    "editor.minimap.renderCharacters": false,
+    "editor.minimap.enabled": false,
+    "github.copilot.nextEditSuggestions.enabled": false,
+    "claudeCode.preferredLocation": "panel",
+    "workbench.startupEditor": "none",
+    "github.copilot.enable": {
+        "*": false,
+        "plaintext": false,
+        "markdown": false,
+        "scminput": false,
+        "jsonc": false,
+        "dockerfile": false
+    },
+    "explorer.fileNesting.patterns": {
+        "*.ts": "${capture}.js",
+        "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
+        "*.jsx": "${capture}.js",
+        "*.tsx": "${capture}.ts",
+        "tsconfig.json": "tsconfig.*.json",
+        "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, bun.lock",
+        "*.sqlite": "${capture}.${extname}-*",
+        "*.db": "${capture}.${extname}-*",
+        "*.sqlite3": "${capture}.${extname}-*",
+        "*.db3": "${capture}.${extname}-*",
+        "*.sdb": "${capture}.${extname}-*",
+        "*.s3db": "${capture}.${extname}-*"
+    },
+    "workbench.colorCustomizations": {
+        "editor.background": "#000000",
+        "sideBar.background": "#000000",
+        "activityBar.background": "#000000",
+        "panel.background": "#000000",
+        "statusBar.background": "#000000",
+        "titleBar.activeBackground": "#000000",
+        "titleBar.inactiveBackground": "#000000",
+        "editorGroupHeader.tabsBackground": "#000000",
+        "tab.inactiveBackground": "#000000",
+        "tab.activeBackground": "#000000",
+        "breadcrumb.background": "#000000",
+        "menu.background": "#000000",
+        "terminal.background": "#000000",
+        "terminal.foreground": "#f8f8f2",
+        "terminalCursor.foreground": "#f8f8f2",
+        "terminal.ansiBlack": "#21222c",
+        "terminal.ansiRed": "#ff5555",
+        "terminal.ansiGreen": "#50fa7b",
+        "terminal.ansiYellow": "#f1fa8c",
+        "terminal.ansiBlue": "#bd93f9",
+        "terminal.ansiMagenta": "#ff79c6",
+        "terminal.ansiCyan": "#8be9fd",
+        "terminal.ansiWhite": "#f8f8f2",
+        "terminal.ansiBrightBlack": "#6272a4",
+        "terminal.ansiBrightRed": "#ff6e6e",
+        "terminal.ansiBrightGreen": "#69ff94",
+        "terminal.ansiBrightYellow": "#ffffa5",
+        "terminal.ansiBrightBlue": "#d6acff",
+        "terminal.ansiBrightMagenta": "#ff92df",
+        "terminal.ansiBrightCyan": "#a4ffff",
+        "terminal.ansiBrightWhite": "#ffffff",
+        "panelTitle.activeForeground": "#f8f8f2",
+        "panelTitle.inactiveForeground": "#6272a4",
+        "panelTitle.activeBorder": "#ff79c6",
+        "titleBar.activeForeground": "#f8f8f2",
+        "titleBar.inactiveForeground": "#6272a4",
+        "breadcrumb.foreground": "#f8f8f2",
+        "breadcrumb.focusForeground": "#f8f8f2",
+        "breadcrumb.activeSelectionForeground": "#ff79c6",
+        "menubar.selectionBackground": "#44475a",
+        "menu.foreground": "#f8f8f2"
+    }
+}
