@@ -26,7 +26,14 @@ export EDITOR=micro
 export VISUAL=micro
 export LANG=en_US.UTF-8
 
-# Aktivera fzf (Fuzzy Finder) om installerat
+# Aktivera Solarized färger (Nu pekar vi på filen direkt)
+if [[ -f "$HOME/.dir_colors" ]]; then
+    eval "$(dircolors -b "$HOME/.dir_colors")"
+fi
+
+alias ls='ls --color=auto'
+
+# Aktivera fzf
 source <(fzf --zsh)
 
 # =========================================================
@@ -39,8 +46,10 @@ alias memtjuvar="ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | head -n 10"
 
 # SSH Servrar
 alias router="ssh router"
-alias 3145="ssh -p 22456 thomas@192.168.10.10"
-alias 3145-2="ssh -p 22456 thomas@192.168.10.11"
+alias media="ssh media"
+alias 3145="ssh 3145"
+alias proxmox="ssh proxmox"
+
 alias ubuntuserver="ssh thomas@192.168.122.7 -p 22456"
 alias fedoraserver="ssh thomas@192.168.122.41 -p 22456"
 
@@ -49,6 +58,9 @@ alias dps="docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
 alias dlogs="docker logs -f"
 alias dclean="docker system prune -af --volumes"
 
+# lazydocker & lazygit
+alias lg="lazygit"
+alias ld="lazydocker"
 # =========================================================
 # 4. ANTECKNINGSSYSTEM (Notes)
 # =========================================================
@@ -96,14 +108,21 @@ chpwd
 # 6. HJÄLPFUNKTIONER (DevOps & Nätverk)
 # =========================================================
 
-# Snyggare IP-koll
+
 function myip() {
+    # Hämta lokal IP snabbt
     local L_IP=$(hostname -I | awk '{print $1}')
-    local P_IP=$(curl -s --max-time 2 https://ifconfig.me || echo "Offline")
+
+    # Hämta Tailscale IP (tystar felmeddelanden om tailscale inte är igång)
+    local TS_IP=$(tailscale ip -4 2>/dev/null || echo "Ej aktiv")
+
+    # Hämta publik IP men med en extremt kort timeout (1 sekund)
+    local P_IP=$(curl -s --max-time 1 https://ifconfig.me || echo "Offline/Timeout")
 
     echo -e "\e[1;34m╭─ Webb & Nätverk ───────────────────────────╮\e[0m"
-    echo -e "\e[1;34m│\e[0m  \e[32m󰩟 Lokal IP:\e[0m  $L_IP"
-    echo -e "\e[1;34m│\e[0m  \e[35m󰖟 Publik IP:\e[0m $P_IP"
+    echo -e "\e[1;34m│\e[0m  \e[32m󰩟 Lokal IP:\e[0m   $L_IP"
+    echo -e "\e[1;34m│\e[0m  \e[36m󰖂 Tailscale:\e[0m  $TS_IP"
+    echo -e "\e[1;34m│\e[0m  \e[35m󰖟 Publik IP:\e[0m  $P_IP"
     echo -e "\e[1;34m╰────────────────────────────────────────────╯\e[0m"
 }
 
@@ -116,7 +135,7 @@ function extract() {
             *.bz2)       bunzip2 $1     ;;
             *.rar)       unrar x $1     ;;
             *.gz)        gunzip $1      ;;
-            *.tar)       tar xf $1      ;;
+            *.tar)       tar x f $1      ;;
             *.tbz2)      tar xjf $1     ;;
             *.tgz)       tar xzf $1     ;;
             *.zip)       unzip $1       ;;
@@ -132,7 +151,6 @@ function extract() {
 function qs() {
     curl -s "https://cht.sh/$1" | less -R
 }
-
 
 # DevOps Dashboard vid start
 function dashboard() {
@@ -152,6 +170,33 @@ function dashboard() {
         echo -e "\e[35m󰚰 Senaste update:\e[0m $LAST_UPDATE"
     fi
 
+
+
+# CPU Temperatur (Uppdaterad för din hårdvara)
+    local TEMP=""
+
+    # 1. Försök använda 'sensors' för att hitta "Package id 0" (Din CPU)
+    if command -v sensors &> /dev/null; then
+        TEMP=$(sensors | awk '/Package id 0/ {print $4}' | tr -d '+')
+    fi
+
+    # 2. Fallback: Om sensors misslyckas, läs från filsystemet
+    if [[ -z "$TEMP" ]]; then
+        if [ -f /sys/class/thermal/thermal_zone0/temp ]; then
+            local TEMP_RAW=$(cat /sys/class/thermal/thermal_zone0/temp)
+            TEMP="$((TEMP_RAW / 1000))°C"
+        else
+            TEMP="N/A"
+        fi
+    fi
+
+    echo -e "\e[31m CPU Temp:\e[0m       $TEMP"
+
+
+
+
+
+
     # Docker-status
     if command -v docker &> /dev/null; then
         local D_RUNNING=$(docker ps -q | wc -l)
@@ -166,3 +211,29 @@ function dashboard() {
 
 # Kör dashboard vid interaktiv start
 [[ $- == *i* ]] && dashboard
+
+
+# Visa alla öppna portar och vilka program som kör dem
+alias ports="sudo lsof -i -P -n | grep LISTEN"
+
+
+# Skicka fil till homelab-server (Användning: send fil.txt <3145> eller <media>)
+function send() {
+    if [ $# -ne 2 ]; then
+        echo "Användning: send [fil] [server-alias]"
+        return 1
+    fi
+
+    local FILE=$1
+    local SERVER=$2
+
+    echo -e "\e[34m📤 Skickar $FILE till $SERVER...\e[0m"
+    # scp använder samma inställningar som ssh, så dina alias fungerar!
+    scp "$FILE" "$SERVER:~/"
+
+    if [ $? -eq 0 ]; then
+        echo -e "\e[32m✅ Klar! Filen ligger i hemkatalogen på $SERVER\e[0m"
+    else
+        echo -e "\e[31m❌ Något gick fel vid överföringen.\e[0m"
+    fi
+}
