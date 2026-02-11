@@ -1,8 +1,12 @@
 {
+    "autosave": 8,
     "colorscheme": "dracula-hc",
+    "diffgutter": true,
     "mkparents": true,
     "rmtrailingws": true,
     "savecursor": true,
     "saveundo": true,
+    "scrollbar": true,
+    "softwrap": true,
     "tabstospaces": true
 }
