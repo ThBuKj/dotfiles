@@ -1,6 +1,6 @@
 {
     "autosave": 8,
-    "colorscheme": "dracula-hc",
+    "colorscheme": "monokai",
     "diffgutter": true,
     "mkparents": true,
     "rmtrailingws": true,

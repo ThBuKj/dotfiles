@@ -12,6 +12,12 @@ HYPHEN_INSENSITIVE="true"
 # Uppdatera Oh My Zsh automatiskt utan att fråga
 zstyle ':omz:update' mode auto
 
+# =========================================================
+# 1.5. PERFORMANCE (Snabbare completion)
+# =========================================================
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.zsh/cache
+
 # Plugins
 zstyle :omz:plugins:ssh-agent identities id_rsa_4096
 plugins=(git ssh-agent z zsh-syntax-highlighting)
@@ -31,6 +37,7 @@ if [[ -f "$HOME/.dir_colors" ]]; then
 fi
 
 alias ls='ls --color=auto'
+# alias ls="ll"
 
 # Aktivera fzf
 source <(fzf --zsh)
@@ -41,6 +48,8 @@ source <(fzf --zsh)
 alias nano="micro"
 alias rg="rg --smart-case"
 alias reload="source ~/.zshrc && echo 'Config laddad!'"
+alias cat='bat'
+alias top='btop'
 alias memtjuvar="ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | head -n 10"
 
 # SSH Servrar
@@ -57,7 +66,6 @@ alias dclean="docker system prune -af --volumes"
 # lazydocker & lazygit
 alias lg="lazygit"
 alias ld="lazydocker"
-
 
 # =========================================================
 # 4. ANTECKNINGSSYSTEM
@@ -159,6 +167,11 @@ function chpwd() {
 }
 chpwd
 
+# Direnv (laddar .envrc automatiskt)
+if command -v direnv &> /dev/null; then
+    eval "$(direnv hook zsh)"
+fi
+
 # =========================================================
 # 6. HJÄLPFUNKTIONER & DASHBOARD
 # =========================================================
@@ -204,59 +217,64 @@ function qs() {
 
 
 
+
+
 # DevOps Dashboard vid start
-function dashboard() {
-    echo -e "\n\e[1;36m🚀 Systemstatus för $HOST\e[0m"
+# function dashboard() {
+    # if [ ! -d "$NOTES_DIR" ]; then
+        # echo -e "\n\e[33m📝 Inga anteckningar än. Skapa din första med: an filnamn\e[0m\n"
+        # return
+    # fi
+#
+    # echo -e "\n\e[1;32m🧠 Second Brain\e[0m"
+#
+    # # Räkna filer
+    # local NOTE_COUNT=$(find "$NOTES_DIR" -name "*.md" | wc -l)
+#
+    # # Räkna ofärdiga To-Dos
+    # local TODO_COUNT=$(grep -r "\- \[ \]" "$NOTES_DIR" 2>/dev/null | wc -l)
+#
+    # echo -e "  \e[36m📝 Totalt:\e[0m $NOTE_COUNT anteckningar · $TODO_COUNT att göra\n"
+#
+    # # --- SENASTE 3 ANTECKNINGARNA ---
+    # echo -e "\e[1;35m📂 Senaste anteckningar\e[0m"
+    # find "$NOTES_DIR" -name "*.md" -type f -printf '%T@ %p\n' 2>/dev/null | \
+        # sort -rn | head -n 3 | while read timestamp filepath; do
+        # local filename=$(basename "$filepath" .md)
+        # local relpath=$(realpath --relative-to="$NOTES_DIR" "$filepath" | sed 's/.md$//')
+        # echo -e "  \e[33m→\e[0m $relpath"
+    # done
+#
+    # # --- TOP 5 OFÄRDIGA TODOS ---
+    # if [ "$TODO_COUNT" -gt 0 ]; then
+        # echo -e "\n\e[1;31m✅ Att göra (Top 5)\e[0m"
+        # grep -rn "\- \[ \]" "$NOTES_DIR" 2>/dev/null | head -n 5 | while IFS=: read -r filepath linenum content; do
+            # local filename=$(basename "$filepath" .md)
+            # local todo=$(echo "$content" | sed 's/^[[:space:]]*-[[:space:]]*\[[[:space:]]*\][[:space:]]*//')
+            # echo -e "  \e[33m→\e[0m $todo \e[90m($filename)\e[0m"
+        # done
+    # fi
+#
+    # echo ""
+# }
 
-    # --- HÅRDVARA ---
-    local RAM=$(free -m | awk '/Mem:/ { printf("%3.1f%%", $3/$2*100) }')
-    local DISK=$(df -h / | awk 'NR==2 {print $5}')
 
-    # CPU Temp
-    local TEMP=""
-    if command -v sensors &> /dev/null; then
-        TEMP=$(sensors | awk '/Package id 0/ {print $4}' | tr -d '+')
-    fi
-    [[ -z "$TEMP" ]] && TEMP="N/A"
 
-    echo -e "  \e[33m󰍛 RAM:\e[0m $RAM    \e[34m󰋊 Disk:\e[0m $DISK    \e[31m CPU:\e[0m $TEMP"
+# --- SNABBMENY ---
+echo -e "\n\e[1;34m⚡ Snabbkommandon\e[0m"
+echo -e "  \e[36man\e[0m <namn>     Skapa/redigera anteckning"
+echo -e "  \e[36mas\e[0m <sökord>   Sök i innehåll"
+echo -e "  \e[36mat\e[0m            Visa alla att-göra"
+echo -e "  \e[36maf\e[0m            Fuzzy-sök med förhandsvisning"
+echo -e "  \e[36manteckningar\e[0m  Gå till anteckningar-mappen"
 
-    # --- AKTIVA TJÄNSTER (Visas bara om de är igång) ---
-    local SERVICE_FOUND=false
 
-    # Docker status
-    if command -v docker &> /dev/null; then
-        local D_RUNNING=$(docker ps -q | wc -l)
-        if [ "$D_RUNNING" -gt 0 ]; then
-            if [ "$SERVICE_FOUND" = false ]; then echo -e "\n\e[1;35m🔥 Active Workloads\e[0m"; SERVICE_FOUND=true; fi
-            echo -e "  \e[34m󰡨 Docker:\e[0m    $D_RUNNING containrar igång"
-        fi
-    fi
 
-    # --- ANTECKNINGAR (Brain Stats) ---
-    if [ -d "$NOTES_DIR" ]; then
-        echo -e "\n\e[1;32m🧠 Second Brain\e[0m"
-
-        # Räkna filer
-        local NOTE_COUNT=$(find "$NOTES_DIR" -name "*.md" | wc -l)
-
-        # Räkna ofärdiga To-Dos
-        local TODO_COUNT=$(grep -r "\- \[ \]" "$NOTES_DIR" 2>/dev/null | wc -l)
-
-        # Senaste filen (sed tar bort .md på slutet för snyggare look)
-        local LAST_FILE=$(ls -t "$NOTES_DIR" | head -n 1 | sed 's/.md//')
-
-        echo -e "  \e[36m📝 Filer:\e[0m     $NOTE_COUNT st"
-        echo -e "  \e[31m✅ Att göra:\e[0m  $TODO_COUNT uppgifter"
-        echo -e "  \e[33m⏮  Senast:\e[0m    $LAST_FILE"
-    fi
-    echo ""
-}
 
 
 
 # STARTKNAPPEN: Kör dashboard om vi är i en terminal
-[[ $- == *i* ]] && dashboard
+# [[ $- == *i* ]] && dashboard  # Kommenterad eftersom dashboard-funktionen är avstängd
 
 # Portar
 alias ports="sudo lsof -i -P -n | grep LISTEN"

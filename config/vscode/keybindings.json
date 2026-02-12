@@ -29,21 +29,63 @@
         "command": "workbench.action.splitEditorRight"
     },
     {
+        "key": "alt+up",
+        "command": "workbench.action.createTerminalEditorSide",
+        "when": "!terminalFocus"
+    },
+    {
+        "key": "alt+up",
+        "command": "workbench.action.closeActiveEditor",
+        "when": "terminalEditorFocus"
+    },
+    {
+        "key": "alt+down",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "workbench.action.createTerminalEditor",
+                "workbench.action.moveEditorToBelowGroup"
+            ]
+        },
+        "when": "!terminalFocus"
+    },
+    {
+        "key": "alt+down",
+        "command": "workbench.action.closeActiveEditor",
+        "when": "terminalEditorFocus"
+    },
+    {
         "key": "alt+w",
         "command": "workbench.action.closeActiveEditor"
     },
-    
-    // 1. GÅ TILL TERMINALEN (Öppna/Fokusera)
+
+    /* --- ÄNDRA STORLEK PÅ FÖNSTER --- */
     {
-        "key": "alt+down",
-        "command": "workbench.action.terminal.toggleTerminal"
+        "key": "ctrl+shift+left",
+        "command": "workbench.action.decreaseViewWidth"
+    },
+    {
+        "key": "ctrl+shift+right",
+        "command": "workbench.action.increaseViewWidth"
+    },
+    {
+        "key": "ctrl+shift+up",
+        "command": "workbench.action.decreaseViewHeight"
+    },
+    {
+        "key": "ctrl+shift+down",
+        "command": "workbench.action.increaseViewHeight"
     },
 
-    // 2. GÅ TILL KODEN (Från Terminalen)
     {
-        "key": "alt+up",
-        "command": "workbench.action.focusActiveEditorGroup",
-        "when": "terminalFocus"
+        "key": "alt+z",
+        "command": "workbench.action.toggleZenMode"
+    },
+
+    {
+        "key": "alt+a",
+        "command": "editor.action.selectHighlights",
+        "when": "editorFocus"
     },
 
     /* --- NAVIGERING FLIKAR --- */

@@ -16,15 +16,19 @@
     "terminal.integrated.minimap.enabled": false,
     "terminal.integrated.stickyScroll.enabled": false,
 
+    "editor.cursorSmoothCaretAnimation": "on",
+    "editor.bracketPairColorization.enabled": true,
+
     /* --- GRUNDINSTÄLLNINGAR --- */
     "workbench.panel.defaultLocation": "right",
     "terminal.integrated.allowChords": false,
     "terminal.integrated.commandsToSkipShell": [
         "workbench.action.previousEditor",
-        "workbench.action.nextEditor"
+        "workbench.action.nextEditor",
+        "workbench.action.closeActiveEditor"
     ],
     "workbench.colorTheme": "Dracula At Night",
-
+    
     "editor.minimap.renderCharacters": false,
     "github.copilot.nextEditSuggestions.enabled": false,
     "claudeCode.preferredLocation": "panel",
@@ -39,7 +43,7 @@
         "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, bun.lock"
     },
 
-    /* --- SYNTAX HIGHLIGHTING (High Contrast) --- */
+    /* --- SYNTAX HIGHLIGHTING (Dina vassa färger) --- */
     "editor.tokenColorCustomizations": {
         "textMateRules": [
             {
@@ -59,9 +63,8 @@
 
     /* --- FÄRGER & BORDERS --- */
     "workbench.colorCustomizations": {
-
+        
         /* --- RAMAR & KANTER (OSYNLIGA/SVARTA) --- */
-        /* Allt sätts till #000000 för att smälta ihop med bakgrunden */
         "activityBar.border": "#000000",
         "sideBar.border": "#000000",
         "panel.border": "#000000",
@@ -70,7 +73,7 @@
         "editorGroup.border": "#000000",
         "tab.border": "#000000",
         "contrastBorder": "#000000",
-
+        
         /* Osynlig scrollbar */
         "scrollbarSlider.background": "#00000000",
         "scrollbarSlider.hoverBackground": "#00000000",
@@ -85,7 +88,7 @@
         "statusBar.background": "#000000",
         "titleBar.activeBackground": "#000000",
         "editorGroupHeader.tabsBackground": "#000000",
-
+        
         /* Text (Kritvit) */
         "foreground": "#ffffff",
         "editor.foreground": "#ffffff",
@@ -95,21 +98,28 @@
         "terminal.foreground": "#ffffff",
         "terminalCursor.foreground": "#00ff00",
 
-        /* Terminal Neon Colors (Behåller dina lila mappar) */
+        /* --- TERMINAL (Dina skarpa originalfärger) --- */
+        /* Här är de rena #ff0000 och #00ff00 färgerna igen */
+        
         "terminal.ansiBlack": "#444444",
-        "terminal.ansiRed": "#ff0000",
-        "terminal.ansiGreen": "#00ff00",
-        "terminal.ansiYellow": "#ffff00",
-        "terminal.ansiBlue": "#bd93f9",       /* LILA MAPPAR */
-        "terminal.ansiMagenta": "#ff00ff",
-        "terminal.ansiCyan": "#00ffff",
+        "terminal.ansiRed": "#ff0000",       /* REN RÖD */
+        "terminal.ansiGreen": "#00ff00",     /* REN GRÖN */
+        "terminal.ansiYellow": "#ffff00",    /* REN GUL */
+        
+        "terminal.ansiBlue": "#bd93f9",      /* LILA (Behåller mappar lila) */
+        
+        "terminal.ansiMagenta": "#ff00ff",   /* REN ROSA */
+        "terminal.ansiCyan": "#00ffff",      /* REN CYAN */
         "terminal.ansiWhite": "#ffffff",
-
+        
+        /* Bright variants */
         "terminal.ansiBrightBlack": "#777777",
         "terminal.ansiBrightRed": "#ff3333",
         "terminal.ansiBrightGreen": "#33ff33",
         "terminal.ansiBrightYellow": "#ffff33",
-        "terminal.ansiBrightBlue": "#d6acff", /* LJUSLILA TEXT */
+        
+        "terminal.ansiBrightBlue": "#d6acff", /* Ljuslila Text */
+        
         "terminal.ansiBrightMagenta": "#ff33ff",
         "terminal.ansiBrightCyan": "#33ffff",
         "terminal.ansiBrightWhite": "#ffffff",
@@ -118,6 +128,6 @@
         "tab.inactiveBackground": "#000000",
         "tab.activeBackground": "#000000",
         "tab.activeForeground": "#ffffff",
-        "tab.activeBorder": "#000000"         /* Ingen linje under flikarna heller */
+        "tab.activeBorder": "#000000"
     }
 }
